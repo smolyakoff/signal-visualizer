@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignalVisualizer", "src\SignalVisualizer\SignalVisualizer.csproj", "{3D4AEBE3-8C6D-481F-A949-16D0776D2DBB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{5B7AD2EF-FDA8-41D2-BF0E-976A732D0012}"
+	ProjectSection(SolutionItems) = preProject
+		readme.md = readme.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sources", "Sources", "{2C6BF8A5-E645-4994-8C48-933AF15BFFE9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3D4AEBE3-8C6D-481F-A949-16D0776D2DBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D4AEBE3-8C6D-481F-A949-16D0776D2DBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D4AEBE3-8C6D-481F-A949-16D0776D2DBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D4AEBE3-8C6D-481F-A949-16D0776D2DBB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3D4AEBE3-8C6D-481F-A949-16D0776D2DBB} = {2C6BF8A5-E645-4994-8C48-933AF15BFFE9}
+	EndGlobalSection
+EndGlobal
