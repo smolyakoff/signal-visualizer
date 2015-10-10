@@ -5,12 +5,14 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Application/Resources/RangeScrollBar.xaml"/>
+                <ResourceDictionary Source="/Application/Resources/Controls.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colors.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Blue.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseDark.xaml" />
+
+                <ResourceDictionary Source="pack://application:,,,/SignalVisualizer;component/Application/Resources/Charts.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/SignalVisualizer;component/Application/Resources/Icons.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/SignalVisualizer;component/Application/Resources/Converters.xaml" />
                 

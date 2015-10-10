@@ -1,6 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:local="clr-namespace:SignalVisualizer">
+                    xmlns:local="clr-namespace:SignalVisualizer"
+                    xmlns:controls="clr-namespace:SignalVisualizer.Application.Controls">
 
     <ControlTemplate x:Key="HorizontalRangeScrollBar" TargetType="{x:Type ScrollBar}">
         <Grid x:Name="Root">
@@ -55,16 +56,16 @@
                               Margin="0,1,0,1">
                             <Rectangle x:Name="Background"
                                        StrokeThickness="1"
-                                       Fill="{DynamicResource AccentColorBrush}">
+                                       Fill="{DynamicResource AccentColorBrush4}" >
                             </Rectangle>
                             <Rectangle x:Name="MouseOverRectangle"
                                        StrokeThickness="1"
                                        Opacity="0"
-                                       Fill="{DynamicResource GrayBrush}" />
+                                       Fill="{DynamicResource AccentColorBrush2}" />
                             <Rectangle x:Name="PressedRectangle"
                                        StrokeThickness="1"
                                        Opacity="0"
-                                       Fill="{DynamicResource GrayBrush}" />
+                                       Fill="{DynamicResource AccentColorBrush2}" />
                         </Grid>
                     </Grid>
                 </ControlTemplate>
@@ -96,7 +97,7 @@
                         <RepeatButton x:Name="HorizontalLargeDecrease"
                                       Command="ScrollBar.PageLeftCommand"
                                       IsTabStop="False"
-                                      Interval="50"
+                                      Interval="10"
                                       Template="{DynamicResource RepeatButtonTemplate}" />
                     </Track.DecreaseRepeatButton>
                     <Track.Thumb>
@@ -106,7 +107,7 @@
                         <RepeatButton x:Name="HorizontalLargeIncrease"
                                       Command="ScrollBar.PageRightCommand"
                                       IsTabStop="False"
-                                      Interval="50"
+                                      Interval="10"
                                       Template="{DynamicResource RepeatButtonTemplate}" />
                     </Track.IncreaseRepeatButton>
                 </Track>
@@ -130,6 +131,4 @@
             </Trigger>
         </Style.Triggers>
     </Style>
-
-
 </ResourceDictionary>

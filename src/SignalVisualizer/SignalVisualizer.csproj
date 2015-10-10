@@ -153,6 +153,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Numerics" />
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\MahApps.Metro.1.1.2.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
       <Private>True</Private>
@@ -175,7 +176,38 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Application\DescriptionView.xaml">
+    <Compile Include="Application\Charting\HistogramChart.cs" />
+    <Compile Include="Application\Charting\IChart.cs" />
+    <Compile Include="Application\Charting\ChartingExtensions.cs" />
+    <Compile Include="Application\Charting\ISliceChart.cs" />
+    <Compile Include="Application\Charting\RawSignalChart.cs" />
+    <Compile Include="Application\Charting\SliceChartBase.cs" />
+    <Compile Include="Application\Charting\SliceChartController.cs" />
+    <Compile Include="Application\Charting\SpectrumChart.cs" />
+    <Compile Include="Application\Utility\ThrottlingEventAggregator.cs" />
+    <Compile Include="Application\HistogramView.xaml.cs">
+      <DependentUpon>HistogramView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Application\HistogramViewModel.cs" />
+    <Compile Include="Application\ISignalViewModel.cs" />
+    <Compile Include="Application\RawSignalView.xaml.cs">
+      <DependentUpon>RawSignalView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Application\Utility\SignalCache.cs" />
+    <Compile Include="Application\SignalInfoViewModel.cs" />
+    <Page Include="Application\HistogramView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Application\RawSignalView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Application\Resources\Charts.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Application\SignalInfoView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -187,11 +219,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Application\SignalTabView.xaml">
+    <Page Include="Application\SpectrumView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Application\SpectrumTabView.xaml">
+    <Page Include="Application\TabView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -204,41 +236,39 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Application\AppBootstrapper.cs" />
-    <Compile Include="Application\DescriptionView.xaml.cs">
-      <DependentUpon>DescriptionView.xaml</DependentUpon>
+    <Compile Include="Application\SignalInfoView.xaml.cs">
+      <DependentUpon>SignalInfoView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Application\HistogramTabViewModel.cs" />
-    <Compile Include="Application\SignalViewModel.cs" />
+    <Compile Include="Application\RawSignalViewModel.cs" />
+    <Compile Include="Application\PropertyViewModel.cs" />
+    <Compile Include="Application\SliderViewModel.cs" />
+    <Compile Include="Application\SpectrumView.xaml.cs">
+      <DependentUpon>SpectrumView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Application\SpectrumViewModel.cs" />
-    <Compile Include="Core\Obsolete\IRange.cs" />
-    <Compile Include="Core\Obsolete\ISignalSource.cs" />
-    <Compile Include="Core\Obsolete\ISignalSourceCollection.cs" />
+    <Compile Include="Application\TabViewModel.cs" />
+    <Compile Include="Core\Point.cs" />
     <Compile Include="Core\Signal.cs" />
     <Compile Include="Core\SignalCollection.cs" />
-    <Compile Include="Core\Obsolete\SignalSource.cs" />
-    <Compile Include="Core\Obsolete\SignalSourceCollection.cs" />
-    <Compile Include="Core\SignalDescription.cs" />
-    <Compile Include="Core\Obsolete\SignalReader.cs" />
-    <Compile Include="Application\Events\RangeChangedEvent.cs" />
-    <Compile Include="Application\SpectrumTabViewModel.cs" />
-    <Compile Include="Application\SignalTabViewModel.cs" />
+    <Compile Include="Core\SignalHeader.cs" />
+    <Compile Include="Application\SliceChangedMessage.cs" />
     <Compile Include="Application\WorksheetViewModel.cs" />
-    <Compile Include="Application\SignalTabView.xaml.cs">
-      <DependentUpon>SignalTabView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Application\SpectrumTabView.xaml.cs">
-      <DependentUpon>SpectrumTabView.xaml</DependentUpon>
+    <Compile Include="Application\TabView.xaml.cs">
+      <DependentUpon>TabView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Application\WorksheetView.xaml.cs">
       <DependentUpon>WorksheetView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Application\Resources\RangeScrollBar.xaml">
+    <Page Include="Application\Resources\Controls.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\SignalSample.cs" />
+    <Compile Include="Core\SignalSerializer.cs" />
+    <Compile Include="Core\Slice.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -256,7 +286,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

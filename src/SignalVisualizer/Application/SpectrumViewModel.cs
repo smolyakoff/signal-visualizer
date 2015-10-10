@@ -1,33 +1,24 @@
-﻿using OxyPlot;
-using OxyPlot.Series;
-using SignalVisualizer.Core;
+﻿using Caliburn.Micro;
+using SignalVisualizer.Application.Charting;
+using SignalVisualizer.Application.Utility;
 
 namespace SignalVisualizer.Application
 {
-    public class SpectrumViewModel
+    public class SpectrumViewModel : ISignalViewModel
     {
-        private readonly Signal _signal;
+        private readonly int _index;
 
-        private readonly LineSeries _series;
-
-        public SpectrumViewModel(Signal signal)
+        public SpectrumViewModel(SignalCache signalCache, int index)
         {
-            _signal = signal;
-            Plot = new PlotModel();
-            _series = new LineSeries();
-            Plot.Series.Add(_series);
+            _index = index;
+            Chart = new SpectrumChart(signalCache);
+            Info = new SignalInfoViewModel(signalCache.Header);
         }
 
-        public SignalDescription Description => _signal.Description;
+        public string Name => $"Спектр сигнала #{_index + 1}";
 
-        public PlotModel Plot { get; }
+        public IChart Chart { get; }
 
-        public void Draw(int position, int count)
-        {
-            var sample = _signal.GetSample(position, count).Spectrum;
-            _series.Points.Clear();
-            _series.Points.AddRange(sample);
-            Plot.InvalidatePlot(false);
-        }
+        public SignalInfoViewModel Info { get; }
     }
 }

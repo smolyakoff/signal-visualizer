@@ -2,7 +2,8 @@
 using System.Linq;
 using Caliburn.Micro;
 using Microsoft.Win32;
-using SignalVisualizer.Application.Events;
+using SignalVisualizer.Application.Charting;
+using SignalVisualizer.Application.Utility;
 using SignalVisualizer.Core;
 
 namespace SignalVisualizer.Application
@@ -10,20 +11,14 @@ namespace SignalVisualizer.Application
     public sealed class WorksheetViewModel : Conductor<IScreen>.Collection.OneActive
     {
         private readonly IEventAggregator _eventAggregator;
+        private readonly SliceChartController _controller;
         private SignalCollection _signals;
-
         private string _fileName;
-        private SignalTabViewModel _signalTab;
-        private SpectrumTabViewModel _spectrumTab;
-        private HistogramTabViewModel _histogramTab;
-        private int _position;
-        private int _sampleSize;
-        
 
-        public WorksheetViewModel(IEventAggregator eventAggregator)
+        public WorksheetViewModel(IEventAggregator eventAggregator, SliceChartController controller)
         {
             _eventAggregator = eventAggregator;
-
+            _controller = controller;
             DisplayName = "Signal Visualizer";
             SampleSizes = new BindableCollection<int>(new []
             {
@@ -34,56 +29,20 @@ namespace SignalVisualizer.Application
                 16384,
                 32768
             });
+            Slider = new SliderViewModel(eventAggregator);
         }
+
+        public int SignalsCount => _signals?.Count ?? 0;
 
         public bool IsFileOpened => _signals != null;
 
         public bool IsFileClosed => !IsFileOpened;
 
-        public int Position
-        {
-            get { return _position; }
-            set
-            {
-                _position = value;
-                NotifyOfPropertyChange(nameof(Position));
-                ChangeRange();
-            }
-        }
-
-        public int MaxPosition => (_signals?.MaxLength - SampleSize) ?? 0;
-
-        public double ViewportSize
-        {
-            get
-            {
-                const int scaleFactor = 4096 * 2048;
-                if (MaxPosition == 0)
-                {
-                    return 0;
-                }
-                return (double)SampleSize * scaleFactor/ _signals.MaxLength ;
-            }
-        }
-
-        public int SampleSize
-        {
-            get { return _sampleSize; }
-            set
-            {
-                _sampleSize = value;
-                if (Position + SampleSize >= _signals.MaxLength)
-                {
-                    Position = _signals.MaxLength - value;
-                }
-                NotifyOfPropertyChange(nameof(SampleSize));
-                NotifyOfPropertyChange(nameof(MaxPosition));
-                NotifyOfPropertyChange(nameof(ViewportSize));
-                ChangeRange();
-            }
-        }
-
         public BindableCollection<int> SampleSizes { get; private set; }
+
+        public SliderViewModel Slider { get; private set; }
+
+        public bool IsDropdownVisible => (ActiveItem as TabViewModel)?.DisplayName != "Гистограмма";
 
         public string FileName
         {
@@ -94,41 +53,37 @@ namespace SignalVisualizer.Application
                 NotifyOfPropertyChange(nameof(FileName));
                 NotifyOfPropertyChange(nameof(IsFileClosed));
                 NotifyOfPropertyChange(nameof(IsFileOpened));
+                NotifyOfPropertyChange(nameof(SignalsCount));
             }
         }
 
         public void Open()
         {
-            var dialog = new OpenFileDialog();
+            var dialog = new OpenFileDialog {Filter = "Файл данных (*.bin;*.txt)|*.bin;*.txt"};
             var chosen = dialog.ShowDialog();
-            if (chosen.HasValue && chosen.Value)
+            if (!chosen.GetValueOrDefault())
             {
-                _signals = SignalCollection.FromFile(dialog.FileName);
-                FileName = Path.GetFileName(dialog.FileName);
-                LoadSignals();
+                return;
             }
-        }
-
-        private void LoadSignals()
-        {
-            _signalTab = new SignalTabViewModel(_eventAggregator, _signals);
-            _spectrumTab = new SpectrumTabViewModel(_eventAggregator, _signals);
-            _histogramTab = new HistogramTabViewModel(_eventAggregator, _signals);
+            _signals = SignalSerializer.DeserializeCollectionFromFile(dialog.FileName);
+            var signals = _signals.Select(x => new SignalCache(x)).ToList();
+            FileName = Path.GetFileName(dialog.FileName);
             Items.Clear();
-            Items.AddRange(new IScreen[]
+            var first = _signals.First();
+            Slider.Reset(first.Header.SampleSize, first.Length);
+            Items.AddRange(new []
             {
-                _signalTab,
-                _spectrumTab,
-                _histogramTab
+                TabViewModel.ForRawSignal(signals, _controller, _eventAggregator),
+                TabViewModel.ForSpectrum(signals, _controller),
+                TabViewModel.ForHistogram(signals),  
             });
-            ActivateItem(_signalTab);
-            Position = 0;
-            SampleSize = _signals.First().Description.SampleSize;
+            ActivateItem(Items[0]);
         }
 
-        private void ChangeRange()
+        protected override void ChangeActiveItem(IScreen newItem, bool closePrevious)
         {
-            _eventAggregator.PublishOnBackgroundThread(new RangeChangedEvent(Position, Position + SampleSize));
+            base.ChangeActiveItem(newItem, closePrevious);
+            NotifyOfPropertyChange(nameof(IsDropdownVisible));
         }
     }
 }

@@ -1,0 +1,69 @@
+﻿<UserControl x:Class="SignalVisualizer.Application.TabView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:application="clr-namespace:SignalVisualizer.Application"
+             xmlns:cal="http://www.caliburnproject.org"
+             mc:Ignorable="d"
+             d:DesignHeight="300" 
+             d:DesignWidth="500" 
+             d:DataContext="{d:DesignInstance application:TabViewModel}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+            <ItemsControl x:Name="Items">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="{Binding Columns}"></UniformGrid>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type application:ISignalViewModel}">
+                        <Border Padding="5">
+                            <Grid MinHeight="200">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <Expander Grid.Row="0" Header="{Binding Name}">
+                                    <ContentControl x:Name="Info" cal:View.Model="{Binding Info}" />
+                                </Expander>
+                                <Border Padding="5" Grid.Row="1" Margin="0,-10,0,0">
+                                    <ContentControl  cal:View.Model="{Binding .}"/>
+                                </Border>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+        <TextBlock Grid.Row="1" 
+                   HorizontalAlignment="Center" 
+                   VerticalAlignment="Center"
+                   Visibility="{Binding IsSliderVisible, Converter={StaticResource BoolToVisibility}}">
+            <TextBlock.Text>
+                <MultiBinding StringFormat="{}{0} - {1} ({2})">
+                    <Binding Path="Slider.Position"/>
+                    <Binding Path="Slider.EndPosition"/>
+                    <Binding Path="Slider.SampleLength"/>
+                </MultiBinding>
+            </TextBlock.Text>
+        </TextBlock>
+        <ScrollBar
+            Style="{DynamicResource RangeScrollBar}"
+            Visibility="{Binding IsSliderVisible, Converter={StaticResource BoolToVisibility}}"
+            Grid.Row="2" 
+            Height="20"
+            Orientation="Horizontal" 
+            Minimum="0" 
+            ViewportSize="{Binding Slider.ViewportSize}"
+            Maximum="{Binding Slider.MaximumPosition}" 
+            Value="{Binding Slider.Position}">
+        </ScrollBar>
+    </Grid>
+</UserControl>

@@ -1,117 +1,68 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
+using System.Diagnostics.Contracts;
 using System.Linq;
-using System.Numerics;
-using System.Runtime.InteropServices;
-using System.Text;
-using MathNet.Numerics.IntegralTransforms;
-using OxyPlot;
+using MathNet.Numerics.Statistics;
 
 namespace SignalVisualizer.Core
 {
-    public class Signal
+    public class Signal : IEnumerable<Point>
     {
-        private readonly SignalDescription _description;
         private readonly double[] _values;
 
-        public static Signal FromFile(string fileName)
-        {
-            using (var fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
-            using (var reader = new BinaryReader(fs))
-            {
-                var header = Encoding.ASCII.GetString(reader.ReadBytes(4));
-                if (!header.StartsWith("TMB"))
-                {
-                    throw new NotSupportedException($"File is not supported. Invalid header: {header}.");
-                }
-                var handle = new GCHandle();
-                SignalDescription description;
-                try
-                {
-                    var data = reader.ReadBytes(Marshal.SizeOf(typeof(SignalDescription)));
-                    handle = GCHandle.Alloc(data, GCHandleType.Pinned);
-                    description = (SignalDescription)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(SignalDescription));
-                }
-                finally
-                {
-                    if (handle.IsAllocated)
-                    {
-                        handle.Free();
-                    }
-                }
-                var buffer = new byte[fs.Length - fs.Position];
-                reader.BaseStream.Read(buffer, 0, buffer.Length);
-                var values = Enumerable.Range(0, buffer.Length)
-                    .Where(x => x % 4 == 0)
-                    .Select(i => BitConverter.ToSingle(buffer, i))
-                    .Select(Convert.ToDouble)
-                    .ToArray();
-                return new Signal(description, values);
-            }
-        }
+        private readonly Lazy<List<Point>> _points;
 
-        private Signal(SignalDescription description, double[] values)
+        private readonly Lazy<DescriptiveStatistics> _stats; 
+
+        private readonly double _tickTime;
+
+        public Signal(SignalHeader header, double[] values)
         {
-            _description = description;
+            Header = header;
             _values = values;
+            _tickTime = (double)header.TotalTime/header.Ticks;
+            _points = new Lazy<List<Point>>(() => _values.Select(ToPoint).ToList());
+            _stats = new Lazy<DescriptiveStatistics>(() => new DescriptiveStatistics(_values));
         }
 
-        public SignalDescription Description => _description;
+        public SignalHeader Header { get; }
 
-        public SignalSample GetSample(int position, int count)
+        public int Length => _values.Length;
+
+        public SignalSample this[Slice slice] => GetSample(slice);
+
+        public double Kurtosis => _stats.Value.Kurtosis;
+
+        public double Skewnewss => _stats.Value.Skewness;
+
+        public SignalSample GetSample(Slice slice)
         {
-            return new SignalSample(_description, position, count, _values);
-        }
-    }
+            Contract.Requires<ArgumentOutOfRangeException>(slice.Position + slice.Length <= Length);
 
-    public class SignalSample : IEnumerable<DataPoint>
-    {
-        private readonly SignalDescription _description;
-        private readonly int _position;
-        private readonly int _count;
-        private readonly double[] _values;
-        private readonly Lazy<DataPoint[]> _spectrum;
-
-        public SignalSample(SignalDescription description, int position, int count, double[] values)
-        {
-            _description = description;
-            _position = position;
-            _count = count;
-            _values = values;
-            _spectrum = new Lazy<DataPoint[]>(CalculateSpectrum);
+            return new SignalSample(this, slice);
         }
 
-        public IEnumerable<DataPoint> Spectrum => _spectrum.Value;
-
-        private DataPoint[] CalculateSpectrum()
+        public Histogram CalculateAmplitudeHistogram(double lower, double upper, int buckets)
         {
-            var complexValues = _values.Skip(_position)
-                .Take(_count)
-                .Select(x => new Complex(x, 0))
-                .ToArray();
-            Fourier.Forward(complexValues, FourierOptions.Matlab);
-            var spectrum = complexValues.Select((v, i) =>
-            {
-                var x = i*(double) _description.Frequency/complexValues.Length;
-                var y = v.Magnitude*2/complexValues.Length;
-                return new DataPoint(x, y);
-            }).Take(complexValues.Length / 2).ToArray();
-            return spectrum;
+            Contract.Requires<ArgumentException>(upper > lower, "Upper value should be greater than lower value.");
+
+            return new Histogram(_values.Where(x => x > lower && x < upper), buckets, lower, upper);
         }
 
-        public IEnumerator<DataPoint> GetEnumerator()
+        public IEnumerator<Point> GetEnumerator()
         {
-            for (var i = _position; i < _position + _count; i++)
-            {
-                yield return new DataPoint(i, _values[i]);
-            }
+            return _points.Value.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+
+        private Point ToPoint(double value, int position)
+        {
+            return new Point(_tickTime * position, value);
         }
     }
 }

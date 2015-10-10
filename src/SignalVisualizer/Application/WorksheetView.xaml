@@ -6,10 +6,12 @@
         xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:local="clr-namespace:SignalVisualizer"
         xmlns:oxy="http://oxyplot.org/wpf"
-                      mc:Ignorable="d"
+        xmlns:application="clr-namespace:SignalVisualizer.Application"
+        mc:Ignorable="d"
         Title="Signal Visualizer" 
         Height="600" 
-        Width="800">
+        Width="800" 
+        d:DataContext="{d:DesignInstance application:WorksheetViewModel}">
     <Grid x:Name="AppGrid" Margin="5">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="60"></ColumnDefinition>
@@ -25,19 +27,27 @@
                     </Rectangle.Fill>
                 </Rectangle>
             </Button>
+            <TextBlock Text="{Binding SignalsCount}"
+                       Margin="5"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
+                       Visibility="{Binding IsFileOpened, Converter={StaticResource BoolToVisibility}}"
+                       FontSize="24"/>
         </StackPanel>
         <Grid x:Name="WorksheetGrid" Grid.Column="1" Visibility="{Binding IsFileOpened, Converter={StaticResource BoolToVisibility}}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="50"></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>
-                <RowDefinition Height="Auto"></RowDefinition>
             </Grid.RowDefinitions>
             <Grid Grid.Row="0" Margin="10">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="Auto" MinWidth="150"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <ComboBox Grid.Column="0" ItemsSource="{Binding SampleSizes}" SelectedItem="{Binding SampleSize}"/>
+                <ComboBox Grid.Column="0" 
+                          ItemsSource="{Binding SampleSizes}" 
+                          SelectedItem="{Binding Slider.Length}"
+                          Visibility="{Binding IsDropdownVisible, Converter={StaticResource BoolToVisibility}}"/>
                 <TextBlock Grid.Column="1"
                         VerticalAlignment="Center"
                         HorizontalAlignment="Center"
@@ -45,16 +55,6 @@
                         FontSize="22"/>
             </Grid>
             <controls:MetroTabControl x:Name="Items" Grid.Row="1"/>
-            <ScrollBar x:Name="RangeSelector"
-                       Grid.Row="2" 
-                       Height="20"
-                       ViewportSize="{Binding ViewportSize}"
-                       Orientation="Horizontal" 
-                       Minimum="0" 
-                       Maximum="{Binding MaxPosition}" 
-                       Value="{Binding Position}"
-                       Style="{DynamicResource RangeScrollBar}">
-            </ScrollBar>
         </Grid>
         <Grid x:Name="NoFileGrid" Grid.Column="1" 
               Visibility="{Binding IsFileClosed, Converter={StaticResource BoolToVisibility}}"

@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 namespace SignalVisualizer.Core
 {
     [StructLayout(LayoutKind.Explicit)]
-    public struct SignalDescription
+    public struct SignalHeader
     {
         [FieldOffset(0)] [MarshalAs(UnmanagedType.I4)] private int _channels;
 
@@ -27,9 +27,9 @@ namespace SignalVisualizer.Core
 
         [FieldOffset(36)] [MarshalAs(UnmanagedType.I4)] private int _receivedBlocks;
 
-        [FieldOffset(40)] [MarshalAs(UnmanagedType.R4)] private float _minValue;
+        [FieldOffset(44)] [MarshalAs(UnmanagedType.R4)] private float _minValue;
 
-        [FieldOffset(44)] [MarshalAs(UnmanagedType.R4)] private float _maxValue;
+        [FieldOffset(40)] [MarshalAs(UnmanagedType.R4)] private float _maxValue;
 
         public int Channels => _channels;
 

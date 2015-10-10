@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Windows;
 using Caliburn.Micro;
+using SignalVisualizer.Application.Charting;
+using SignalVisualizer.Application.Utility;
 
 namespace SignalVisualizer.Application
 {
@@ -16,10 +18,11 @@ namespace SignalVisualizer.Application
 
         protected override void Configure()
         {
-            _container.Singleton<IEventAggregator, EventAggregator>()
-                .Singleton<IWindowManager, WindowManager>()
+            _container.RegisterInstance(typeof(IEventAggregator), null, new ThrottlingEventAggregator(1000 / 15));
+            _container.Singleton<IWindowManager, WindowManager>()
+                .PerRequest<SliceChartController, SliceChartController>()
                 .PerRequest<WorksheetViewModel, WorksheetViewModel>()
-                .PerRequest<SignalTabViewModel, SignalTabViewModel>();
+                .PerRequest<TabViewModel, TabViewModel>();
         }
 
         protected override object GetInstance(Type service, string key)

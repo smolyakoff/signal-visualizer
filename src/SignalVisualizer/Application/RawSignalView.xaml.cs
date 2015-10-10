@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace SignalVisualizer.Application
 {
     /// <summary>
-    /// Interaction logic for DescriptionView.xaml
+    /// Interaction logic for RawSignalView.xaml
     /// </summary>
-    public partial class DescriptionView : UserControl
+    public partial class RawSignalView : UserControl
     {
-        public DescriptionView()
+        public RawSignalView()
         {
             InitializeComponent();
         }
