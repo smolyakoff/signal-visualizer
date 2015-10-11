@@ -63,20 +63,6 @@
                 <TextBlock Grid.Column="3" Text="{Binding Skewness, StringFormat={}{0:F3}}" HorizontalAlignment="Right" Margin="0,5,5,0"/>
             </Grid>
             <oxy:PlotView Grid.Row="1" Model="{Binding Chart.Model}">
-            <oxy:PlotView.DefaultTrackerTemplate>
-                <ControlTemplate>
-                    <oxy:TrackerControl 
-                        Position="{Binding Position}" 
-                        LineExtents="{Binding PlotModel.PlotArea}"
-                        Background="#D43335">
-                        <oxy:TrackerControl.Content>
-                            <TextBlock Text="{Binding}" Margin="7" />
-                        </oxy:TrackerControl.Content>
-                    </oxy:TrackerControl>
-                </ControlTemplate>
-            </oxy:PlotView.DefaultTrackerTemplate>
-        </oxy:PlotView>
-            <oxy:PlotView Grid.Row="1" Model="{Binding Chart.Model}">
                 <oxy:PlotView.DefaultTrackerTemplate>
                     <ControlTemplate>
                         <oxy:TrackerControl 

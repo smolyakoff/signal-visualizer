@@ -18,7 +18,7 @@ namespace SignalVisualizer.Application.Charting
         public HistogramChart(SignalCache signal)
         {
             _signal = signal;
-            RefreshModel();
+
         }
 
         public PlotModel Model { get; set; }
@@ -37,7 +37,6 @@ namespace SignalVisualizer.Application.Charting
             }
             _xAxis.LabelFormatter = l => l.ToString();
             _xAxis.Maximum = _series.Items.Count - 0.5;
-            Model.InvalidatePlot(false);
             NotifyOfPropertyChange(nameof(Model));
         }
 
