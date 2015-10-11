@@ -21,7 +21,6 @@ namespace SignalVisualizer.Application.Charting
         public override void Draw(Slice slice, List<DataPoint> points)
         {
             YAxis.Maximum = points.Select(x => x.Y).Max();
-            Model.ResetAllAxes();
             base.Draw(slice, points);
         }
 

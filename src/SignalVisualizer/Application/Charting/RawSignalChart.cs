@@ -8,10 +8,18 @@ namespace SignalVisualizer.Application.Charting
 {
     public class RawSignalChart : SliceChartBase
     {
+        private readonly SignalCache _signal;
+
         public RawSignalChart(SignalCache signal)
         {
+            _signal = signal;
             XAxis.IsPanEnabled = false;
             Series.Points.AddRange(signal.Select(x => x.ToDataPoint()));
+        }
+
+        public override List<DataPoint> Calculate(Slice slice)
+        {
+            return _signal.GetSample(slice).Select(x => x.ToDataPoint()).ToList();
         }
 
         public override void Draw(Slice slice, List<DataPoint> points)
@@ -22,8 +30,8 @@ namespace SignalVisualizer.Application.Charting
             }
             if (points.Count > 0)
             {
-                XAxis.Minimum = points[slice.Position].X;
-                XAxis.Maximum = points[slice.Position + slice.Length - 1].X;
+                XAxis.Minimum = points[0].X;
+                XAxis.Maximum = points[points.Count - 1].X;
             }
             Model.ResetAllAxes();
             base.Draw(slice, points);
