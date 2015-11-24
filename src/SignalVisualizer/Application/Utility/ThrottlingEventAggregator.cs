@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Diagnostics.Contracts;
-using System.Linq;
-using System.Threading;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using Caliburn.Micro;
 using Action = System.Action;
 
@@ -12,17 +11,21 @@ namespace SignalVisualizer.Application.Utility
     {
         private readonly IEventAggregator _eventAggregator;
 
-        private readonly ConcurrentQueue<Tuple<object, Action<Action>>> _queue;
+        private readonly IDisposable _eventsSubscription;
 
-        private readonly Timer _timer;
+        private readonly Subject<Tuple<object, Action<Action>>> _eventsSubject;
 
         public ThrottlingEventAggregator(int period)
         {
             Contract.Requires<ArgumentOutOfRangeException>(period > 0);
 
+            _eventsSubject = new Subject<Tuple<object, Action<Action>>>();
+            _eventsSubscription = _eventsSubject
+                .GroupByUntil(x => x.Item1.GetType(), group => group.Throttle(TimeSpan.FromTicks(period)))
+                .SelectMany(x => x.TakeLast(1))
+                .Subscribe(Dispatch);
+
             _eventAggregator = new EventAggregator();
-            _queue = new ConcurrentQueue<Tuple<object, Action<Action>>>();
-            _timer = new Timer(OnTimer, false, 0, period);
         }
 
         public void Dispose()
@@ -52,23 +55,21 @@ namespace SignalVisualizer.Application.Utility
             {
                 return;
             }
-            _queue.Enqueue(Tuple.Create(message, marshal));
+            _eventsSubject.OnNext(Tuple.Create(message, marshal));
         }
 
         protected void Dispose(bool disposing)
         {
             if (disposing)
             {
-                _timer?.Dispose();
+                _eventsSubscription?.Dispose();
+                _eventsSubject?.Dispose();
             }
         }
 
-        private void OnTimer(object state)
+        private void Dispatch(Tuple<object, Action<Action>> @event)
         {
-            foreach (var item in _queue.GroupBy(x => x.Item1.GetType()).Select(x => x.Last()))
-            {
-                _eventAggregator.Publish(item.Item1, item.Item2);
-            }
+            _eventAggregator.Publish(@event.Item1, @event.Item2);
         }
     }
 }

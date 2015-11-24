@@ -78,6 +78,7 @@ namespace SignalVisualizer.Application
                 TabViewModel.ForHistogram(signals)
             });
             ActivateItem(Items[0]);
+            Slider.Notify();
         }
 
         protected override void ChangeActiveItem(IScreen newItem, bool closePrevious)

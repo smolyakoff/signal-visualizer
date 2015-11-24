@@ -64,6 +64,11 @@ namespace SignalVisualizer.Application
 
         public Slice Slice => new Slice(Position, Length);
 
+        public void Notify()
+        {
+            _eventAggregator.PublishOnBackgroundThread(new SliceChangedMessage(Slice));
+        }
+
         public void Reset(int length, int sampleLength)
         {
             _sampleLength = sampleLength;
@@ -74,7 +79,7 @@ namespace SignalVisualizer.Application
             NotifyOfPropertyChange(nameof(Position));
             NotifyOfPropertyChange(nameof(MaximumPosition));
             NotifyOfPropertyChange(nameof(EndPosition));
-            _eventAggregator.PublishOnBackgroundThread(new SliceChangedMessage(Slice));
+            Notify();
         }
     }
 }
