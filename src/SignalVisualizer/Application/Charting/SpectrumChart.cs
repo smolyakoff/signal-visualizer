@@ -14,7 +14,7 @@ namespace SignalVisualizer.Application.Charting
         {
             _signalCache = signalCache;
             XAxis.Minimum = 0;
-            XAxis.Maximum = (double)_signalCache.Header.Frequency / 2;
+            XAxis.Maximum = (double) _signalCache.Header.Frequency/2;
             XAxis.AbsoluteMaximum = XAxis.Maximum;
         }
 

@@ -6,8 +6,8 @@ namespace SignalVisualizer.Application
 {
     public class RawSignalViewModel : PropertyChangedBase, ISignalViewModel, IHandle<SliceChangedMessage>
     {
-        private readonly SignalCache _signalCache;
         private readonly int _order;
+        private readonly SignalCache _signalCache;
 
 
         public RawSignalViewModel(SignalCache signalCache, int order)
@@ -19,13 +19,7 @@ namespace SignalVisualizer.Application
             Properties = new BindableCollection<PropertyViewModel>();
         }
 
-        public string Name => $"Чистый сигнал {_order + 1}";
-
-        public IChart Chart { get; }
-
-        public BindableCollection<PropertyViewModel> Properties { get; } 
-
-        public SignalInfoViewModel Info { get; }
+        public BindableCollection<PropertyViewModel> Properties { get; }
 
         public void Handle(SliceChangedMessage message)
         {
@@ -43,5 +37,11 @@ namespace SignalVisualizer.Application
                 Properties.AddRange(properties);
             });
         }
+
+        public string Name => $"Чистый сигнал {_order + 1}";
+
+        public IChart Chart { get; }
+
+        public SignalInfoViewModel Info { get; }
     }
 }

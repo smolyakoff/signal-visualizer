@@ -16,7 +16,7 @@ namespace SignalVisualizer.Core
             switch (extension)
             {
                 case ".bin":
-                    return new SignalCollection(new [] {DeserializeFromFile(filePath)});
+                    return new SignalCollection(new[] {DeserializeFromFile(filePath)});
                 case ".txt":
                     var collectionFileInfo = new FileInfo(filePath);
                     if (collectionFileInfo.Directory == null)
@@ -31,7 +31,7 @@ namespace SignalVisualizer.Core
                         .ToList();
                     return new SignalCollection(sources);
                 default:
-                    throw new NotSupportedException($"File extension {extension} is not supported.");    
+                    throw new NotSupportedException($"File extension {extension} is not supported.");
             }
         }
 

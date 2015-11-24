@@ -11,13 +11,13 @@ namespace SignalVisualizer.Core
 {
     public class SignalSample : IEnumerable<Point>
     {
+        private readonly Lazy<double> _max;
+        private readonly Lazy<double> _min;
+        private readonly Lazy<double> _peakFactor;
+        private readonly Lazy<double> _rms;
         private readonly Signal _signal;
         private readonly Slice _slice;
-        private readonly Lazy<double> _min;
-        private readonly Lazy<double> _max;
-        private readonly Lazy<double> _rms;
-        private readonly Lazy<double> _peakFactor;
-        private readonly Lazy<SortedList<double, object>> _sortedValues; 
+        private readonly Lazy<SortedList<double, object>> _sortedValues;
 
         private readonly Lazy<Point[]> _spectrum;
 
@@ -48,6 +48,16 @@ namespace SignalVisualizer.Core
 
         public double PeakFactor => _peakFactor.Value;
 
+        public IEnumerator<Point> GetEnumerator()
+        {
+            return _signal.Skip(_slice.Position).Take(_slice.Length).GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
         private Point[] CalculateAmplitudeSpectrum()
         {
             var values = _signal.Skip(_slice.Position)
@@ -56,7 +66,7 @@ namespace SignalVisualizer.Core
                 .ToArray();
             Fourier.Forward(values, FourierOptions.Matlab);
             var spectrum = values.Select(ToSpectrumPoint)
-                .Take(values.Length / 2)
+                .Take(values.Length/2)
                 .ToArray();
             return spectrum;
         }
@@ -69,7 +79,7 @@ namespace SignalVisualizer.Core
                 dictionary[value.Y] = null;
             }
             return new SortedList<double, object>(dictionary);
-        } 
+        }
 
         private double CalculateMinimum()
         {
@@ -94,19 +104,9 @@ namespace SignalVisualizer.Core
 
         private Point ToSpectrumPoint(Complex c, int i)
         {
-            var x = i * (double)_signal.Header.Frequency * 2 / Length;
-            var y = c.Magnitude * 2 / Length;
+            var x = i*(double) _signal.Header.Frequency*2/Length;
+            var y = c.Magnitude*2/Length;
             return new Point(x, y);
-        }
-
-        public IEnumerator<Point> GetEnumerator()
-        {
-            return _signal.Skip(_slice.Position).Take(_slice.Length).GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
         }
     }
 }

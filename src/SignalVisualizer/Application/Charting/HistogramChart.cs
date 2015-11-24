@@ -18,7 +18,6 @@ namespace SignalVisualizer.Application.Charting
         public HistogramChart(SignalCache signal)
         {
             _signal = signal;
-
         }
 
         public PlotModel Model { get; set; }

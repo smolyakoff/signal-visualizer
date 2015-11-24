@@ -1,5 +1,4 @@
 ﻿using Caliburn.Micro;
-using SignalVisualizer.Application.Charting;
 using SignalVisualizer.Core;
 
 namespace SignalVisualizer.Application
@@ -7,8 +6,8 @@ namespace SignalVisualizer.Application
     public class SliderViewModel : PropertyChangedBase
     {
         private readonly IEventAggregator _eventAggregator;
-        private int _position;
         private int _length;
+        private int _position;
         private int _sampleLength;
 
         public SliderViewModel(IEventAggregator eventAggregator)
@@ -43,7 +42,7 @@ namespace SignalVisualizer.Application
 
         public int MaximumPosition => SampleLength - Length;
 
-        public double ViewportSize => (double)MaximumPosition/SampleLength * Length;
+        public double ViewportSize => (double) MaximumPosition/SampleLength*Length;
 
         public int Length
         {
@@ -63,6 +62,8 @@ namespace SignalVisualizer.Application
             }
         }
 
+        public Slice Slice => new Slice(Position, Length);
+
         public void Reset(int length, int sampleLength)
         {
             _sampleLength = sampleLength;
@@ -75,7 +76,5 @@ namespace SignalVisualizer.Application
             NotifyOfPropertyChange(nameof(EndPosition));
             _eventAggregator.PublishOnBackgroundThread(new SliceChangedMessage(Slice));
         }
-
-        public Slice Slice => new Slice(Position, Length);
     }
 }

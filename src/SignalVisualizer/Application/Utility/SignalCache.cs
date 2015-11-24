@@ -9,8 +9,8 @@ namespace SignalVisualizer.Application.Utility
 {
     public class SignalCache : IEnumerable<Point>
     {
-        private readonly Signal _signal;
         private readonly MemoryCache _cache;
+        private readonly Signal _signal;
 
         public SignalCache(Signal signal)
         {
@@ -24,6 +24,16 @@ namespace SignalVisualizer.Application.Utility
 
         public double Kurtosis => _signal.Kurtosis;
 
+        public IEnumerator<Point> GetEnumerator()
+        {
+            return _signal.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
         public SignalSample GetSample(Slice slice)
         {
             var key = CacheKeyForSlice(slice);
@@ -35,16 +45,6 @@ namespace SignalVisualizer.Application.Utility
             sample = _signal.GetSample(slice);
             _cache[key] = sample;
             return sample;
-        }
-
-        public IEnumerator<Point> GetEnumerator()
-        {
-            return _signal.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
         }
 
         public Histogram CalculateAmplitudeHistogram(double lower, double upper, int buckets)

@@ -18,7 +18,7 @@ namespace SignalVisualizer.Application
 
         protected override void Configure()
         {
-            _container.RegisterInstance(typeof(IEventAggregator), null, new ThrottlingEventAggregator(1000 / 15));
+            _container.RegisterInstance(typeof (IEventAggregator), null, new ThrottlingEventAggregator(1000/15));
             _container.Singleton<IWindowManager, WindowManager>()
                 .PerRequest<SliceChartController, SliceChartController>()
                 .PerRequest<WorksheetViewModel, WorksheetViewModel>()
@@ -27,7 +27,7 @@ namespace SignalVisualizer.Application
 
         protected override object GetInstance(Type service, string key)
         {
-            return  _container.GetInstance(service, key);
+            return _container.GetInstance(service, key);
         }
 
         protected override IEnumerable<object> GetAllInstances(Type service)

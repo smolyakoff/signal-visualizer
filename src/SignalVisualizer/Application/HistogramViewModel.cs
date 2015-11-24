@@ -9,12 +9,12 @@ namespace SignalVisualizer.Application
 {
     public class HistogramViewModel : PropertyChangedBase, ISignalViewModel
     {
+        private readonly HistogramChart _chart;
+        private readonly int _index;
+        private readonly SignalCache _signal;
+        private int _buckets;
         private double _lowerBound;
         private double _upperBound;
-        private int _buckets;
-        private readonly SignalCache _signal;
-        private readonly int _index;
-        private readonly HistogramChart _chart;
 
         public HistogramViewModel(SignalCache signal, int index)
         {
@@ -30,12 +30,6 @@ namespace SignalVisualizer.Application
             Columns = new BindableCollection<Tuple<int, Bucket>>();
             Update();
         }
-
-        public string Name => $"Гистограмма аплитуд (сигнал #{_index + 1})";
-
-        public IChart Chart => _chart;
-
-        public SignalInfoViewModel Info { get; }
 
         public double MinValue { get; }
 
@@ -79,6 +73,12 @@ namespace SignalVisualizer.Application
                 Update();
             }
         }
+
+        public string Name => $"Гистограмма аплитуд (сигнал #{_index + 1})";
+
+        public IChart Chart => _chart;
+
+        public SignalInfoViewModel Info { get; }
 
         private void Update()
         {

@@ -1,74 +1,76 @@
 ﻿<UserControl x:Class="SignalVisualizer.Application.HistogramView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:SignalVisualizer.Application"
              xmlns:oxy="http://oxyplot.org/wpf"
              xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
-             mc:Ignorable="d" 
-             d:DesignHeight="300" 
-             d:DesignWidth="300" 
+             mc:Ignorable="d"
+             d:DesignHeight="300"
+             d:DesignWidth="300"
              d:DataContext="{d:DesignInstance local:HistogramViewModel}">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="150"/>
-            <ColumnDefinition/>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="150" />
+            <ColumnDefinition />
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <StackPanel Grid.Column="0" Orientation="Vertical" Margin="0,0,5,0">
             <StackPanel.Resources>
                 <Style TargetType="{x:Type TextBlock}">
-                    <Setter Property="Margin" Value="0,5,0,0"/>
+                    <Setter Property="Margin" Value="0,5,0,0" />
                 </Style>
                 <Style TargetType="{x:Type controls:NumericUpDown}">
-                    <Setter Property="Margin" Value="0,5,0,0"/>
+                    <Setter Property="Margin" Value="0,5,0,0" />
                 </Style>
             </StackPanel.Resources>
-            <TextBlock Text="Начальная амплитуда"/>
-            <controls:NumericUpDown 
+            <TextBlock Text="Начальная амплитуда" />
+            <controls:NumericUpDown
                 Value="{Binding LowerBound}"
                 Minimum="{Binding MinValue}"
                 StringFormat="{}{0:F3}"
                 Maximum="{Binding UpperBound}"
-                Interval="0.1"/>
-            <TextBlock Text="Конечная амплитуда"/>
-            <controls:NumericUpDown 
+                Interval="0.1" />
+            <TextBlock Text="Конечная амплитуда" />
+            <controls:NumericUpDown
                 Value="{Binding UpperBound}"
                 StringFormat="{}{0:F3}"
                 Minimum="{Binding LowerBound}"
                 Maximum="{Binding MaxValue}"
-                Interval="0.1"/>
-            <TextBlock Text="Количество столбцов"/>
-            <controls:NumericUpDown 
+                Interval="0.1" />
+            <TextBlock Text="Количество столбцов" />
+            <controls:NumericUpDown
                 Value="{Binding Buckets}"
                 Minimum="0"
-                Maximum="200"/>
+                Maximum="200" />
         </StackPanel>
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition/>
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
             </Grid.RowDefinitions>
             <Grid Grid.Row="0" Margin="50,0,0,0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Text="Эксцесс" Margin="0,5,0,0"/>
-                <TextBlock Grid.Column="1" Text="{Binding Kurtosis, StringFormat={}{0:F3}}" HorizontalAlignment="Right" Margin="0,5,5,0"/>
-                <TextBlock Grid.Column="2" Text="Асимметрия" Margin="0,5,0,0"/>
-                <TextBlock Grid.Column="3" Text="{Binding Skewness, StringFormat={}{0:F3}}" HorizontalAlignment="Right" Margin="0,5,5,0"/>
+                <TextBlock Grid.Column="0" Text="Эксцесс" Margin="0,5,0,0" />
+                <TextBlock Grid.Column="1" Text="{Binding Kurtosis, StringFormat={}{0:F3}}" HorizontalAlignment="Right"
+                           Margin="0,5,5,0" />
+                <TextBlock Grid.Column="2" Text="Асимметрия" Margin="0,5,0,0" />
+                <TextBlock Grid.Column="3" Text="{Binding Skewness, StringFormat={}{0:F3}}" HorizontalAlignment="Right"
+                           Margin="0,5,5,0" />
             </Grid>
             <oxy:PlotView Grid.Row="1" Model="{Binding Chart.Model}">
                 <oxy:PlotView.DefaultTrackerTemplate>
                     <ControlTemplate>
-                        <oxy:TrackerControl 
-                        Position="{Binding Position}" 
-                        LineExtents="{Binding PlotModel.PlotArea}"
-                        Background="#D43335">
+                        <oxy:TrackerControl
+                            Position="{Binding Position}"
+                            LineExtents="{Binding PlotModel.PlotArea}"
+                            Background="#D43335">
                             <oxy:TrackerControl.Content>
                                 <TextBlock Text="{Binding}" Margin="7" />
                             </oxy:TrackerControl.Content>
@@ -77,27 +79,27 @@
                 </oxy:PlotView.DefaultTrackerTemplate>
             </oxy:PlotView>
         </Grid>
-        
+
         <ItemsControl Grid.Column="2" ItemsSource="{Binding Columns}" Margin="20,5,0,0">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <StackPanel Orientation="Vertical"/>
+                    <StackPanel Orientation="Vertical" />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" MinWidth="20"/>
-                            <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto" MinWidth="20" />
+                            <ColumnDefinition />
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0"
-                                   Text="{Binding Item1}"/>
+                                   Text="{Binding Item1}" />
                         <TextBlock Grid.Column="1" HorizontalAlignment="Right">
                             <TextBlock.Text>
                                 <MultiBinding StringFormat="{}{0:F3} -> {1:F3}">
-                                    <Binding Path="Item2.LowerBound"/>
-                                    <Binding Path="Item2.UpperBound"/>
+                                    <Binding Path="Item2.LowerBound" />
+                                    <Binding Path="Item2.UpperBound" />
                                 </MultiBinding>
                             </TextBlock.Text>
                         </TextBlock>

@@ -1,5 +1,4 @@
-﻿using Caliburn.Micro;
-using SignalVisualizer.Application.Charting;
+﻿using SignalVisualizer.Application.Charting;
 using SignalVisualizer.Application.Utility;
 
 namespace SignalVisualizer.Application

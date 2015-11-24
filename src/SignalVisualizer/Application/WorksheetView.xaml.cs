@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Input;
 
 namespace SignalVisualizer.Application
 {
@@ -9,12 +10,11 @@ namespace SignalVisualizer.Application
             InitializeComponent();
         }
 
-        private void Items_Loaded(object sender, System.Windows.RoutedEventArgs e)
+        private void Items_Loaded(object sender, RoutedEventArgs e)
         {
-
         }
 
-        private void RangeSlider_ManipulationCompleted(object sender, System.Windows.Input.ManipulationCompletedEventArgs e)
+        private void RangeSlider_ManipulationCompleted(object sender, ManipulationCompletedEventArgs e)
         {
             MessageBox.Show("Shit");
         }

@@ -8,12 +8,6 @@ namespace SignalVisualizer.Application.Charting
 {
     public abstract class SliceChartBase : ISliceChart
     {
-        protected Axis XAxis { get; }
-
-        protected Axis YAxis { get; }
-
-        protected LineSeries Series { get; }
-
         protected SliceChartBase()
         {
             Model = new PlotModel();
@@ -37,6 +31,12 @@ namespace SignalVisualizer.Application.Charting
             Model.Series.Add(Series);
             Model.ApplyDefaultTheme();
         }
+
+        protected Axis XAxis { get; }
+
+        protected Axis YAxis { get; }
+
+        protected LineSeries Series { get; }
 
         public PlotModel Model { get; }
 

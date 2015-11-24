@@ -7,9 +7,9 @@ namespace SignalVisualizer.Application
     {
         public SignalInfoViewModel(SignalHeader header)
         {
-            Properties = new BindableCollection<PropertyViewModel>(new []
+            Properties = new BindableCollection<PropertyViewModel>(new[]
             {
-                new PropertyViewModel {Label = "Количество каналов", Value = header.Channels },
+                new PropertyViewModel {Label = "Количество каналов", Value = header.Channels},
                 new PropertyViewModel {Label = "Размер выборки на один канал", Value = header.SampleSize},
                 new PropertyViewModel {Label = "Количество спектральных линий", Value = header.SpectrumLines},
                 new PropertyViewModel {Label = "Частота среза", Value = header.Frequency},
@@ -24,6 +24,6 @@ namespace SignalVisualizer.Application
             });
         }
 
-        public BindableCollection<PropertyViewModel> Properties { get; private set; } 
+        public BindableCollection<PropertyViewModel> Properties { get; private set; }
     }
 }

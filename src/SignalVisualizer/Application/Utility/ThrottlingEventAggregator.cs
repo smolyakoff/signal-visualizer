@@ -12,9 +12,9 @@ namespace SignalVisualizer.Application.Utility
     {
         private readonly IEventAggregator _eventAggregator;
 
-        private readonly Timer _timer;
-
         private readonly ConcurrentQueue<Tuple<object, Action<Action>>> _queue;
+
+        private readonly Timer _timer;
 
         public ThrottlingEventAggregator(int period)
         {
@@ -23,6 +23,12 @@ namespace SignalVisualizer.Application.Utility
             _eventAggregator = new EventAggregator();
             _queue = new ConcurrentQueue<Tuple<object, Action<Action>>>();
             _timer = new Timer(OnTimer, false, 0, period);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         public bool HandlerExistsFor(Type messageType)
@@ -47,12 +53,6 @@ namespace SignalVisualizer.Application.Utility
                 return;
             }
             _queue.Enqueue(Tuple.Create(message, marshal));
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
         }
 
         protected void Dispose(bool disposing)

@@ -31,14 +31,14 @@ namespace SignalVisualizer.Core
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
-            return obj is Slice && Equals((Slice)obj);
+            return obj is Slice && Equals((Slice) obj);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return (Position * 397) ^ Length;
+                return (Position*397) ^ Length;
             }
         }
 

@@ -10,17 +10,17 @@ namespace SignalVisualizer.Application
 {
     public sealed class WorksheetViewModel : Conductor<IScreen>.Collection.OneActive
     {
-        private readonly IEventAggregator _eventAggregator;
         private readonly SliceChartController _controller;
-        private SignalCollection _signals;
+        private readonly IEventAggregator _eventAggregator;
         private string _fileName;
+        private SignalCollection _signals;
 
         public WorksheetViewModel(IEventAggregator eventAggregator, SliceChartController controller)
         {
             _eventAggregator = eventAggregator;
             _controller = controller;
             DisplayName = "Signal Visualizer";
-            SampleSizes = new BindableCollection<int>(new []
+            SampleSizes = new BindableCollection<int>(new[]
             {
                 1024,
                 2048,
@@ -40,7 +40,7 @@ namespace SignalVisualizer.Application
 
         public BindableCollection<int> SampleSizes { get; private set; }
 
-        public SliderViewModel Slider { get; private set; }
+        public SliderViewModel Slider { get; }
 
         public bool IsDropdownVisible => (ActiveItem as TabViewModel)?.DisplayName != "Гистограмма";
 
@@ -71,11 +71,11 @@ namespace SignalVisualizer.Application
             Items.Clear();
             var first = _signals.First();
             Slider.Reset(first.Header.SampleSize, first.Length);
-            Items.AddRange(new []
+            Items.AddRange(new[]
             {
                 TabViewModel.ForRawSignal(signals, _controller, _eventAggregator),
                 TabViewModel.ForSpectrum(signals, _controller),
-                TabViewModel.ForHistogram(signals),  
+                TabViewModel.ForHistogram(signals)
             });
             ActivateItem(Items[0]);
         }

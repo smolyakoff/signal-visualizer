@@ -2,7 +2,6 @@
 using System.Collections.Concurrent;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using System.Threading;
 using Caliburn.Micro;
 using SignalVisualizer.Core;
 
@@ -10,16 +9,22 @@ namespace SignalVisualizer.Application.Charting
 {
     public class SliceChartController : IHandle<SliceChangedMessage>
     {
-        private Slice _lastSlice;
+        private readonly ConcurrentDictionary<ISliceChart, ISliceChart> _charts =
+            new ConcurrentDictionary<ISliceChart, ISliceChart>();
 
         private Slice _lastDrawnSlice;
-
-        private readonly ConcurrentDictionary<ISliceChart, ISliceChart> _charts = new ConcurrentDictionary<ISliceChart, ISliceChart>();
+        private Slice _lastSlice;
 
         public SliceChartController(IEventAggregator eventAggregator, Slice slice)
         {
             eventAggregator.Subscribe(this);
             _lastSlice = slice;
+        }
+
+        public void Handle(SliceChangedMessage message)
+        {
+            _lastSlice = message.Slice;
+            Draw(false);
         }
 
         public void Register(ISliceChart chart)
@@ -33,12 +38,6 @@ namespace SignalVisualizer.Application.Charting
             Contract.Requires<ArgumentNullException>(chart != null);
             ISliceChart rubbish;
             _charts.TryRemove(chart, out rubbish);
-        }
-
-        public void Handle(SliceChangedMessage message)
-        {
-            _lastSlice = message.Slice;
-            Draw(false);
         }
 
         public void ForceDraw()

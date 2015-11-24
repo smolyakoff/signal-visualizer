@@ -66,7 +66,8 @@ namespace SignalVisualizer.Application
             base.OnDeactivate(close);
         }
 
-        public static TabViewModel ForRawSignal(IEnumerable<SignalCache> signals , SliceChartController controller, IEventAggregator eventAggregator)
+        public static TabViewModel ForRawSignal(IEnumerable<SignalCache> signals, SliceChartController controller,
+            IEventAggregator eventAggregator)
         {
             Contract.Requires(signals != null);
             Contract.Requires(controller != null);
